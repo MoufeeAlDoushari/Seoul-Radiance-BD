@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-label="Dr.Althea 147 Barrier Cream">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0%" stop-color="#f6efe6"/>
+      <stop offset="100%" stop-color="#e6d3bd"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.55">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <circle cx="400" cy="430" r="250" fill="url(#glow)"/>
+  <ellipse cx="400" cy="630" rx="150" ry="26" fill="#8a6b4a" opacity="0.12"/>
+  
+      <rect x="290" y="400" width="220" height="150" rx="26" fill="#fff" opacity="0.92"/>
+      <rect x="278" y="378" width="244" height="40" rx="18" fill="#8a6b4a" opacity="0.22"/>
+
+  <text x="400" y="470" text-anchor="middle" font-family="Georgia, serif" font-size="26" fill="#8a6b4a" opacity="0.85">Dr.Althea</text>
+
+  <text x="400" y="740" text-anchor="middle" font-family="Georgia, serif" font-size="20" letter-spacing="4" fill="#8a6b4a" opacity="0.7">DR.ALTHEA</text>
+  <text x="400" y="790" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#8a6b4a">147 Barrier Cream</text>
+  <text x="400" y="840" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="18" letter-spacing="3" fill="#8a6b4a" opacity="0.55">MOISTURIZER</text>
+</svg>

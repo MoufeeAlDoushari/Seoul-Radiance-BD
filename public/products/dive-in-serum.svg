@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-label="Torriden DIVE-IN Low Molecular Hyaluronic Acid Serum">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0%" stop-color="#fbeef0"/>
+      <stop offset="100%" stop-color="#f0cdd3"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.55">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <circle cx="400" cy="430" r="250" fill="url(#glow)"/>
+  <ellipse cx="400" cy="630" rx="150" ry="26" fill="#9c5a66" opacity="0.12"/>
+  
+      <rect x="325" y="330" width="150" height="280" rx="26" fill="#fff" opacity="0.92"/>
+      <rect x="372" y="268" width="56" height="70" rx="10" fill="#fff" opacity="0.75"/>
+      <rect x="360" y="248" width="80" height="30" rx="12" fill="#9c5a66" opacity="0.3"/>
+
+  <text x="400" y="420" text-anchor="middle" font-family="Georgia, serif" font-size="26" fill="#9c5a66" opacity="0.85">Torriden</text>
+
+  <text x="400" y="740" text-anchor="middle" font-family="Georgia, serif" font-size="20" letter-spacing="4" fill="#9c5a66" opacity="0.7">TORRIDEN</text>
+  <text x="400" y="790" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#9c5a66">DIVE-IN Low Molecular</text>
+  <text x="400" y="830" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#9c5a66">Hyaluronic Acid Serum</text>
+  <text x="400" y="880" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="18" letter-spacing="3" fill="#9c5a66" opacity="0.55">SERUM</text>
+</svg>

@@ -1,0 +1,30 @@
+{
+  "name": "seoul-radiance-bd",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:seed": "node scripts/seed.mjs",
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "db:reset": "node scripts/reset.mjs && node scripts/seed.mjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "motion": "^13.1.1",
+    "next": "15.5.4",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.1.13",
+    "@types/node": "24.5.2",
+    "@types/react": "19.1.13",
+    "@types/react-dom": "19.1.9",
+    "tailwindcss": "4.1.13",
+    "typescript": "5.9.2"
+  }
+}

@@ -1,0 +1,411 @@
+/* ===========================================================================
+   SEOUL RADIANCE — UNIFIED DARK CINEMATIC SYSTEM
+   ---------------------------------------------------------------------------
+   One environment for the whole site. .cine wraps every route, so the ground
+   never changes when you scroll or navigate.
+
+   The core idea: sections do NOT paint their own backgrounds. A single fixed
+   backdrop sits behind everything, and the old light section colours
+   (cream / blush / plum bands) are dissolved to transparent so nothing reads
+   as a stacked rectangle. Only *cards* get a surface, and it is a barely-there
+   translucent lift — never white.
+
+   Re-theming works through the Tailwind v4 theme variables: `text-plum`
+   compiles to `color: var(--color-plum)`, so redefining the variable inside
+   .cine converts every existing usage at once.
+   =========================================================================== */
+
+:root {
+  /* ground */
+  --sr-base: #080707;
+  --sr-secondary: #100c0e;
+  --sr-warm: #171113;
+
+  /* type */
+  --sr-ink: #f6f1ec;
+  --sr-ink-2: rgba(246, 241, 236, 0.65);
+  --sr-ink-3: rgba(246, 241, 236, 0.45);
+
+  /* brand */
+  --sr-rose: #e8b4b8;
+  --sr-rose-rgb: 232, 180, 184;
+
+  /* surfaces */
+  --sr-card: rgba(255, 255, 255, 0.045);
+  --sr-card-hover: rgba(232, 180, 184, 0.07);
+  --sr-line: rgba(232, 180, 184, 0.12);
+}
+
+/* The page ground itself. html stays unpainted so body's colour propagates to
+   the canvas — that is what lets the z-index:-1 backdrop paint above it. */
+body {
+  background-color: var(--sr-base);
+  color: var(--sr-ink);
+}
+
+.cine {
+  color-scheme: dark;
+
+  /* Existing utilities repoint at the dark palette. */
+  --color-plum: var(--sr-ink);
+  --color-plum-soft: var(--sr-ink-2);
+  --color-rose-deep: var(--sr-rose);
+  --color-rose: var(--sr-rose);
+  --color-cream: var(--sr-ink);
+
+  color: var(--sr-ink);
+}
+
+/* ------------------------------------------------------------- the backdrop */
+.cine-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--sr-base);
+}
+
+.cine-bg__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.16;
+  filter: saturate(0.75) contrast(1.04);
+}
+
+/* Heavy scrim: the video is atmosphere, never competition for the type. */
+.cine-bg__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 7, 7, 0.9) 0%,
+    rgba(16, 12, 14, 0.82) 40%,
+    rgba(8, 7, 7, 0.88) 100%
+  );
+}
+
+/* The one warm note: a wide, very low rose bloom so the dark reads warm
+   rather than flat grey. */
+.cine-bg__vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      90% 60% at 50% 12%,
+      rgba(var(--sr-rose-rgb), 0.06) 0%,
+      rgba(var(--sr-rose-rgb), 0) 70%
+    ),
+    radial-gradient(120% 90% at 50% 45%, rgba(8, 7, 7, 0) 0%, rgba(8, 7, 7, 0.55) 100%);
+}
+
+/* =====================================================================
+   1. SECTIONS DISSOLVE
+   The old theme banded the page: cream hero, plum marquee, blush block.
+   Every one of those page-level fills becomes transparent so the shared
+   backdrop shows through continuously. Rounded elements are excluded —
+   those are cards, handled below.
+   ===================================================================== */
+.cine [class*='bg-cream']:not([class*='rounded']),
+.cine [class*='bg-blush']:not([class*='rounded']),
+.cine [class*='bg-plum']:not([class*='rounded']),
+.cine [class*='bg-white']:not([class*='rounded']) {
+  background-color: transparent;
+}
+
+/* Section dividers stay as hairlines rather than colour changes. */
+.cine [class*='border-plum'] {
+  border-color: var(--sr-line);
+}
+
+/* Thin rules drawn with a background (h-px / w-px dividers) need to stay
+   visible even though the bg-plum fill above was cleared. */
+.cine [class*='bg-plum'][class*='h-8'],
+.cine [class*='bg-plum'][class*='w-px'],
+.cine [class*='bg-plum'][class*='h-px'] {
+  background-color: var(--sr-line);
+}
+
+/* =====================================================================
+   2. CARDS
+   Slightly lifted from the ground, never white.
+   ===================================================================== */
+.cine [class*='rounded'][class*='bg-white'],
+.cine [class*='rounded'][class*='bg-blush'],
+.cine [class*='rounded'][class*='bg-cream'] {
+  background-color: var(--sr-card);
+  border-color: var(--sr-line);
+}
+
+.cine .card-hover:hover {
+  background-color: var(--sr-card-hover);
+  border-color: rgba(var(--sr-rose-rgb), 0.24);
+  box-shadow: 0 18px 44px -22px rgba(0, 0, 0, 0.8);
+}
+
+/* Pill badges sit on top of bright product imagery, so they keep a solid
+   dark chip — a translucent lift would leave ivory text unreadable there. */
+.cine [class*='bg-plum'][class*='rounded-full'] {
+  background-color: rgba(10, 8, 9, 0.86);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Status chips keep real colour so they still read as badges. */
+.cine [class*='bg-rose-deep'] {
+  background-color: #b4737d;
+}
+
+.cine [class*='bg-sage'] {
+  background-color: #6d8a77;
+}
+
+/* Out-of-stock veil over a product photo. */
+.cine [class*='rounded'] > [class*='bg-cream'],
+.cine [class*='bg-cream'][class*='inset-0'] {
+  background-color: rgba(8, 7, 7, 0.78);
+}
+
+/* =====================================================================
+   3. PRODUCT IMAGERY
+   The photo plate may legitimately be light — that is the product, not the
+   page. Never dim or tint it.
+   ===================================================================== */
+.cine img {
+  opacity: 1;
+}
+
+/* =====================================================================
+   4. CHROME — header and footer belong to the same environment
+   ===================================================================== */
+.cine header {
+  background-color: rgba(8, 7, 7, 0.72) !important;
+  border-bottom-color: var(--sr-line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Announcement strip: a whisper of warmth, not a band. */
+.cine header ~ *,
+.cine [class*='bg-plum'][class*='text-cream']:not([class*='rounded']) {
+  background-color: transparent;
+}
+
+.cine footer {
+  background-color: transparent;
+  border-top-color: var(--sr-line);
+}
+
+/* The shop's sticky filter bar needs a scrim so cards don't ghost through. */
+.cine .sticky[class*='bg-cream'],
+.cine .sticky[class*='bg-white'] {
+  background-color: rgba(8, 7, 7, 0.86);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* =====================================================================
+   5. BUTTONS
+   ===================================================================== */
+.cine .btn-primary {
+  background: var(--sr-ink);
+  color: var(--sr-warm);
+  box-shadow: none;
+}
+
+.cine .btn-primary:hover {
+  background: var(--sr-rose);
+  color: var(--sr-warm);
+  box-shadow: 0 0 24px -4px rgba(var(--sr-rose-rgb), 0.45);
+}
+
+.cine .btn-outline {
+  background: transparent;
+  border-color: rgba(var(--sr-rose-rgb), 0.32);
+  color: var(--sr-ink);
+}
+
+.cine .btn-outline:hover {
+  background: rgba(var(--sr-rose-rgb), 0.09);
+  border-color: rgba(var(--sr-rose-rgb), 0.55);
+  color: var(--sr-ink);
+  box-shadow: 0 0 22px -6px rgba(var(--sr-rose-rgb), 0.4);
+}
+
+/* Selected filter chip — the light theme separated it with bg-plum vs
+   bg-white, and both now dissolve, so it needs its own contrast. */
+.chip-active {
+  background: var(--color-plum);
+  border-color: var(--color-plum);
+  color: var(--color-cream);
+}
+
+.cine .chip-active {
+  background: var(--sr-ink);
+  border-color: var(--sr-ink);
+  color: var(--sr-warm);
+}
+
+/* =====================================================================
+   6. FORMS
+   ===================================================================== */
+.cine .field {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(var(--sr-rose-rgb), 0.18);
+  color: var(--sr-ink);
+}
+
+.cine .field::placeholder {
+  color: var(--sr-ink-3);
+}
+
+.cine .field:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--sr-rose);
+  box-shadow: 0 0 0 3px rgba(var(--sr-rose-rgb), 0.18);
+}
+
+.cine .field-label {
+  color: var(--sr-ink-2);
+}
+
+.cine select.field option {
+  background: var(--sr-warm);
+  color: var(--sr-ink);
+}
+
+.cine [class*='shadow-plum'] {
+  --tw-shadow-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Selected radio/option card. bg-blush/40 marked this in the light theme, but
+   that now resolves to the same surface as the unselected state — so the
+   selected option needs a rose edge and a faint rose fill instead. */
+.option-selected {
+  border-color: rgba(232, 180, 184, 0.5) !important;
+  background-color: rgba(232, 180, 184, 0.08);
+}
+
+/* ===========================================================================
+   TYPOGRAPHY & RHYTHM
+   ---------------------------------------------------------------------------
+   One serif (Cormorant, --font-display) for anything that carries a voice, one
+   sans (Jakarta, --font-sans) for everything that carries information. The hero
+   used to run Playfair + Outfit + General Sans, which is why it read as a
+   different site from the shop; it now shares these two.
+
+   Sizes are declarative rather than per-page utilities so the hierarchy holds
+   everywhere: display -> section -> product name -> body -> meta.
+   =========================================================================== */
+
+.cine {
+  /* Editorial measure: long-form copy stops before it gets hard to track. */
+  --sr-measure: 62ch;
+}
+
+/* Display serif carries optical sizing and tighter tracking as it scales up. */
+.cine .font-display {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.06;
+}
+
+/* Section headings: consistent scale wherever they appear. */
+.cine h2.font-display {
+  letter-spacing: -0.018em;
+  line-height: 1.12;
+}
+
+/* Body copy: never bold, never full-width. */
+.cine p {
+  max-width: var(--sr-measure);
+}
+
+/* The eyebrow is the one piece of rose-accented micro-type on every page. */
+.cine .eyebrow {
+  color: var(--sr-rose);
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  font-weight: 600;
+}
+
+/* Metadata — sizes, counts, captions — sits at the quietest level. */
+.cine .text-plum-soft {
+  font-weight: 400;
+}
+
+/* Links pick up the rose accent consistently. */
+.cine a:not(.btn):not(.social-icon):not([class*='chip']):hover {
+  color: var(--sr-rose);
+}
+
+/* Buttons: one shape language, generous tap target, no shout. */
+.cine .btn {
+  letter-spacing: 0.01em;
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   Product reveal panel
+   Only mounted visually where hovering is actually possible. On touch the card
+   keeps its always-visible Add to cart and the panel never appears, so no
+   product information sits behind an interaction the device cannot perform.
+   --------------------------------------------------------------------------- */
+.has-reveal {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .has-reveal {
+    display: flex;
+  }
+}
+
+/* The panel is aria-hidden (its content is duplicated in the card and on the
+   product page), so keep it out of the tab order too. */
+.has-reveal:not(:hover) button,
+.has-reveal:not(:hover) a {
+  visibility: hidden;
+}
+
+.group:hover .has-reveal button,
+.group:hover .has-reveal a {
+  visibility: visible;
+}
+
+/* Reveal panel glass. A soft rose wash at the top settling into near-opaque
+   charcoal, so the panel reads as tinted rather than as a flat black box —
+   while still fully masking the card's own name and price beneath it. */
+.reveal-glass {
+  background: linear-gradient(
+    180deg,
+    rgba(232, 180, 184, 0.11) 0%,
+    rgba(12, 9, 10, 0.95) 42%,
+    rgba(9, 7, 8, 0.975) 100%
+  );
+  border: 1px solid rgba(232, 180, 184, 0.18);
+}
+
+/* Ingredient tiles: the reference's feature grid, carrying real data. */
+.reveal-tile {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(232, 180, 184, 0.14);
+}
+
+/* A single hairline of rose along the panel's top edge — the highlight that
+   makes the glass read as a physical surface rather than a flat fill. */
+.reveal-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(232, 180, 184, 0) 0%,
+    rgba(232, 180, 184, 0.45) 50%,
+    rgba(232, 180, 184, 0) 100%
+  );
+}
+

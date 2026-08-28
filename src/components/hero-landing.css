@@ -1,0 +1,470 @@
+/* ---------------------------------------------------------------------------
+   Loopstack-inspired hero — visually identical to the standalone landing, but
+   restructured to sit in normal document flow so the page scrolls.
+
+   What changed from the fixed-screen version:
+     - No html/body overflow rules at all. The document scrolls normally.
+     - Every layer that was `position: fixed` is now `position: absolute`,
+       anchored to .lp-hero instead of the viewport, so the whole hero scrolls
+       away as one piece.
+     - z-indexes are all >= 0. .lp-hero paints a black background, and a
+       negative-z child would paint *behind* that background and vanish.
+     - The two custom-cursor elements stay `position: fixed`: they track the
+       pointer in viewport space. They are shown only while the pointer is
+       actually over the hero.
+   Sizes, colours, easings and timings are otherwise untouched.
+   --------------------------------------------------------------------------- */
+
+
+/* Brand accent: Seoul Radiance rose, replacing the template's neon. Glows are
+   dialled well below neon strength so the rose reads as a highlight. */
+:root {
+  --lp-accent: #e8b4b8;
+  --lp-accent-rgb: 232, 180, 184;
+}
+
+.lp-hero {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #000000;
+  /* Contains the oversized wordmark and the 110%-tall video. This is the hero's
+     own clipping only — it does not stop the document from scrolling. */
+  overflow: hidden;
+}
+
+/* ----------------------------------------------------------- 1. top gradient */
+.lp-hero .top-gradient {
+  position: absolute;
+  top: -30vh;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ 2. hero */
+.lp-hero .hero-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 6vh;
+  width: 95%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.lp-hero .hero-title {
+  font-family: var(--font-display);
+  font-size: 3.1rem;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1.15;
+  margin-bottom: 2.2rem;
+  letter-spacing: -0.015em;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.lp-hero .hero-btn {
+  font-family: var(--font-sans);
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  background-color: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 1.3rem 2.5rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+  outline: none;
+  text-decoration: none;
+}
+
+.lp-hero .hero-btn:hover {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+}
+
+.lp-hero .hero-btn:active {
+  transform: translateY(0);
+}
+
+.lp-hero .blinking-dot {
+  width: 10px;
+  height: 10px;
+  background-color: var(--lp-accent);
+  border-radius: 50%;
+  position: relative;
+  display: inline-block;
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+.lp-hero .blinking-dot::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background-color: rgba(var(--lp-accent-rgb), 0.2);
+  border-radius: 50%;
+  animation: wave-expand 2s infinite ease-in-out;
+}
+
+/* Same 2s ease-in-out cadence as the template; only the amplitude is softened. */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.92);
+    box-shadow: 0 0 3px rgba(var(--lp-accent-rgb), 0.2);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+    box-shadow: 0 0 9px rgba(var(--lp-accent-rgb), 0.5);
+  }
+}
+
+@keyframes wave-expand {
+  0% {
+    transform: scale(0.75);
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------- 3. footer */
+.lp-hero .hero-meta {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  right: 20px;
+  transform: translateY(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+}
+
+.lp-hero .footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  padding: 0 5px;
+  gap: 1rem;
+}
+
+.lp-hero .footer-title {
+  font-family: var(--font-sans);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.lp-hero .footer-title.quote {
+  text-transform: none;
+}
+
+.lp-hero .footer-divider {
+  border: none;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin: 1.6rem 0;
+  width: 100%;
+}
+
+.lp-hero .footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 5px;
+  gap: 1rem;
+}
+
+.lp-hero .footer-socials {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  flex: 1;
+}
+
+.lp-hero .social-icon {
+  color: rgba(255, 255, 255, 0.55);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.lp-hero .social-icon:hover {
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.lp-hero .footer-links {
+  display: flex;
+  gap: 2.8rem;
+  justify-content: center;
+  align-items: center;
+  flex: 2;
+}
+
+.lp-hero .footer-link {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #ffffff;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.lp-hero .footer-link:hover {
+  opacity: 0.75;
+  transform: translateY(-1px);
+}
+
+.lp-hero .footer-copyright {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: right;
+  flex: 1;
+  letter-spacing: 0.02em;
+}
+
+/* -------------------------------------------------------------- 4. wordmark */
+.lp-hero .footer-logo-wrap {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4;
+  margin: 0;
+}
+
+.lp-hero .footer-logo-text {
+  font-family: var(--font-sans);
+  /* 13.6vw, not the template's 21.9vw: "Seoul Radiance" is 14 characters where
+     "Loopstack" was 9, so 21.9vw overflows the nowrap line. */
+  font-size: 13.6vw;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  margin-right: -0.03em;
+  transform: translateX(-20px);
+  line-height: 0.8;
+  margin: 0;
+  text-align: center;
+  width: 100%;
+  pointer-events: none;
+  opacity: 0.95;
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------------- 5. video */
+.lp-hero .video-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 90%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.lp-hero .bg-video {
+  width: 100%;
+  height: 110%;
+  object-fit: cover;
+  display: block;
+  transform: translateY(0%);
+}
+
+/* ------------------------------------------------- 6. hand-off to the shop */
+/* Fades the cinematic black into the plum marquee that opens the shop content,
+   so the seam reads as one page rather than two sites bolted together. */
+.lp-hero .hero-fade-out {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22vh;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(12, 9, 10, 0.6) 45%,
+    rgba(8, 7, 7, 0.94) 82%,
+    #080707 100%
+  );
+}
+
+/* --------------------------------------------------- entrance reveals */
+.lp-hero .hero-title .word-wrapper {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
+}
+
+.lp-hero .hero-title .word-inner {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(105%);
+  filter: blur(20px);
+  animation: word-reveal-mask 1.3s cubic-bezier(0.05, 0.9, 0.1, 1) forwards;
+}
+
+@keyframes word-reveal-mask {
+  0% {
+    opacity: 0;
+    transform: translateY(105%);
+    filter: blur(20px);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.lp-hero .footer-logo-text .letter-wrapper {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  line-height: 0.8;
+}
+
+.lp-hero .footer-logo-text .letter-inner {
+  display: inline-block;
+  opacity: 0;
+  transform: translateX(-105%);
+  filter: blur(20px);
+  animation: letter-reveal-mask 1.2s cubic-bezier(0.05, 0.9, 0.1, 1) forwards;
+}
+
+@keyframes letter-reveal-mask {
+  0% {
+    opacity: 0;
+    transform: translateX(-105%);
+    filter: blur(20px);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.95;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+/* --------------------------------------------------------------- responsive */
+/* Only guards against horizontal overflow and collisions on small screens; the
+   desktop composition is unchanged. */
+@media (max-width: 860px) {
+  .lp-hero .hero-title {
+    font-size: 2rem;
+  }
+
+  .lp-hero .footer-links {
+    gap: 1.4rem;
+  }
+
+  .lp-hero .footer-link,
+  .lp-hero .footer-copyright {
+    font-size: 0.82rem;
+  }
+
+  .lp-hero .footer-title {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .lp-hero .hero-title {
+    font-size: 1.6rem;
+  }
+
+  .lp-hero .hero-btn {
+    font-size: 0.95rem;
+    padding: 1rem 1.8rem;
+  }
+
+  .lp-hero .hero-meta {
+    left: 14px;
+    right: 14px;
+  }
+
+  .lp-hero .footer-top,
+  .lp-hero .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+
+  .lp-hero .footer-links {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1.1rem;
+  }
+
+  .lp-hero .footer-copyright {
+    text-align: left;
+  }
+
+  .lp-hero .footer-divider {
+    margin: 1.1rem 0;
+  }
+}
+
+/* Honour reduced-motion: show the copy, skip the reveals and the pulsing. */
+@media (prefers-reduced-motion: reduce) {
+  .lp-hero .hero-title .word-inner,
+  .lp-hero .footer-logo-text .letter-inner {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .lp-hero .blinking-dot,
+  .lp-hero .blinking-dot::after {
+    animation: none;
+  }
+}
